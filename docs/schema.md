@@ -1,6 +1,6 @@
 # Storage schema
 
-No custom tables or schema migrations. Activation adds a default WordPress option only if absent; rollback deactivates the plugin, and uninstall deletes its disposable option. Existing catalog and quote data are not touched.
+No custom tables or schema migrations. Activation adds defaults only if `puc_settings` is absent. Deactivation reverses the frontend enhancement; uninstall deletes only this disposable option. Catalog data, Brizy metadata, and quote records are not touched.
 
 ```mermaid
 erDiagram
@@ -12,6 +12,28 @@ erDiagram
  }
 ```
 
-`puc_settings`: enabled, floating, header, footer, remember (literal booleans represented as 0/1); default_unit (in/cm); decimals (0–3); position (four corner allowlist); header_location (registered menu-location allowlist); header_selector and footer_selector (bounded selector strings); background and foreground color fields; radius and floating offset (bounded integers). Exact field names and defaults are defined in `PUC_Settings::defaults()`. No foreign keys or cascade rules.
+## `wp_options` row `puc_settings`
 
-Browser key `puc_unit`: in/cm visitor preference. No personally identifying data, cookies, or server profile. Temporary browser QA sessions live outside the repository and are revoked after testing.
+Serialized WordPress option managed through the Settings API. Every key is non-null and resolved against defaults; unknown keys are discarded. No additional indexes, foreign keys, or cascade rules.
+
+| Key | Type / allowed values | Default |
+|---|---|---|
+| enabled | integer 0 or 1 | 1 |
+| floating | integer 0 or 1 | 1 |
+| header | integer 0 or 1 | 0 |
+| footer | integer 0 or 1 | 0 |
+| remember | integer 0 or 1 | 1 |
+| default_unit | in, cm | in |
+| decimals | integer 0–3 | 1 |
+| position | top-left, top-right, bottom-left, bottom-right | bottom-right |
+| header_location | registered non-footer menu location, or empty for DOM fallback | menu_1 when registered |
+| header_selector | bounded plain CSS selector, maximum 200 bytes | empty |
+| footer_selector | bounded plain CSS selector, maximum 200 bytes | empty |
+| background_color | strict six-digit hex color | #173942 |
+| text_color | strict six-digit hex color | #ffffff |
+| radius | integer 0–100 px | 8 |
+| floating_offset | integer 0–200 px | 20 |
+
+Boolean settings accept only literal integer `1` or string `"1"` as enabled. Browser key `puc_unit` stores only `in` or `cm`; no identifying data, preference cookies, or server profile. Implicit option values may be pinned to their original strings in the DOM so display labels cannot change form submissions.
+
+No seed data is required: activation initializes settings idempotently. No forward/reverse schema migration is needed because this does not modify database structure. Temporary browser QA sessions are kept outside the repository and revoked after verification.

@@ -4,7 +4,7 @@ Tags: inches, centimetres, units, display
 Requires at least: 6.0
 Requires PHP: 7.4
 Stable tag: 0.1.0
-License: GPL-2.0-or-later
+License: MIT
 
 Display-only inches to centimetres toggle. No WooCommerce dependency.
 
