@@ -15,7 +15,7 @@
 .puc-preview-header, .puc-preview-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 64px; box-sizing: border-box; padding: 10px 12px; background: #fff; color: #50575e; }
 .puc-preview-header { border-bottom: 1px solid #dcdcde; }
 .puc-preview-footer { position: absolute; bottom: 0; left: 0; right: 0; border-top: 1px solid #dcdcde; }
-.puc-preview-content { padding: 24px 16px 120px; }
+.puc-preview-content { position: relative; min-height: 212px; box-sizing: border-box; padding: 24px 16px 80px; }
 .puc-preview-content p { font-size: 20px; }
 .puc-preview-content small { color: #646970; }
 .puc-preview .puc-floating { position: absolute; z-index: 1; }

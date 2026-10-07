@@ -29,6 +29,11 @@ with sync_playwright() as p:
    node=admin.locator('[name="puc_settings['+key+']"]')
    if key in ['enabled','floating','header','footer','remember']:node.set_checked(bool(value))
    elif key in ['position','decimals','default_unit','header_location']:node.select_option(str(value))
+   elif key in ['background_color','text_color']:
+    picker=node.locator('xpath=ancestor::div[contains(@class,"wp-picker-container")]')
+    if not node.is_visible():picker.locator('.wp-color-result').click()
+    node.fill(str(value));node.press('Tab')
+    if picker.locator('.iris-picker').is_visible():picker.locator('.wp-color-result').click()
    else:node.fill(str(value))
   with admin.expect_navigation(wait_until='domcontentloaded',timeout=90000):admin.locator('#submit').click()
  def go(path):
