@@ -46,7 +46,7 @@ function checked( $value, $expected = true, $echo = true ) { $result = (string) 
 function selected( $value, $expected = true, $echo = true ) { $result = (string) $value === (string) $expected ? ' selected="selected"' : ''; if ( $echo ) { echo $result; } return $result; }
 function settings_fields( $group ) { echo '<input type="hidden" name="option_page" value="' . esc_attr( $group ) . '"><input type="hidden" name="_wpnonce" value="stub-nonce">'; }
 function submit_button() { echo '<button type="submit">Save Changes</button>'; }
-function wp_enqueue_style( $handle, $src, $deps = array(), $version = false, $media = 'all' ) { $GLOBALS['puc_test']['styles'][ $handle ] = array( $src, $deps, $version, $media ); }
+function wp_enqueue_style( $handle, $src = '', $deps = array(), $version = false, $media = 'all' ) { $GLOBALS['puc_test']['styles'][ $handle ] = array( $src, $deps, $version, $media ); }
 function wp_enqueue_script( $handle, $src, $deps = array(), $version = false, $footer = false ) { $GLOBALS['puc_test']['scripts'][ $handle ] = array( $src, $deps, $version, $footer ); }
 function wp_localize_script( $handle, $name, $data ) { $GLOBALS['puc_test']['localized'][ $name ] = $data; return true; }
 function wp_add_inline_style( $handle, $data ) { $GLOBALS['puc_test']['inline'][ $handle ] = $data; return true; }

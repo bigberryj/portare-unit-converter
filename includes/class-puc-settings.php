@@ -11,12 +11,21 @@ final class PUC_Settings {
     public function init(): void {
         add_action( 'admin_menu', array( $this, 'add_page' ) );
         add_action( 'admin_init', array( $this, 'register' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
     }
     public function add_page(): void {
         add_options_page( 'Portare Unit Converter', 'Portare Unit Converter', 'manage_options', 'portare-unit-converter', array( $this, 'render' ) );
     }
     public function register(): void {
         register_setting( 'puc_settings_group', PUC_OPTION_KEY, array( 'type' => 'array', 'sanitize_callback' => array( $this, 'sanitize' ), 'default' => self::defaults(), 'show_in_rest' => false ) );
+    }
+    public function assets( $hook ): void {
+        if ( 'settings_page_portare-unit-converter' !== $hook || ! current_user_can( 'manage_options' ) ) { return; }
+        wp_enqueue_style( 'wp-color-picker' );
+        // Reuse the real frontend button CSS; never run the sitewide converter in admin.
+        wp_enqueue_style( 'puc-preview-buttons', plugins_url( 'assets/converter.css', PUC_PLUGIN_FILE ), array(), PUC_VERSION );
+        wp_enqueue_style( 'puc-settings', plugins_url( 'assets/settings.css', PUC_PLUGIN_FILE ), array( 'puc-preview-buttons', 'wp-color-picker' ), PUC_VERSION );
+        wp_enqueue_script( 'puc-settings', plugins_url( 'assets/settings.js', PUC_PLUGIN_FILE ), array( 'jquery', 'wp-color-picker' ), PUC_VERSION, true );
     }
     private static function flag( $value ): int { return ( 1 === $value || '1' === $value ) ? 1 : 0; }
     private static function integer( $value, int $min, int $max, int $default ): int {
@@ -66,9 +75,9 @@ final class PUC_Settings {
     public function render(): void {
         if ( ! current_user_can( 'manage_options' ) ) { wp_die( esc_html__( 'You do not have permission to manage these settings.', 'portare-unit-converter' ) ); return; }
         $values = $this->get();
-        echo '<div class="wrap"><h1>Portare Unit Converter</h1><p>Display-only inches to centimetres. Saved content, product data, prices and numeric inputs are never changed. Images and PDFs cannot be converted; unlabelled numbers are skipped.</p><p>With initial units set to inches, no conversion happens until a visitor toggles (unless a remembered preference applies). Brizy editor/preview and wp-admin are excluded.</p><form method="post" action="options.php">';
+        echo '<div class="wrap puc-settings"><h1>Portare Unit Converter</h1><p>Display-only inches to centimetres. Saved content, product data, prices and numeric inputs are never changed. Images and PDFs cannot be converted; unlabelled numbers are skipped.</p><p>With initial units set to inches, no conversion happens until a visitor toggles (unless a remembered preference applies). Brizy editor/preview and wp-admin are excluded.</p><form id="puc-settings-form" method="post" action="options.php">';
         settings_fields( 'puc_settings_group' );
-        echo '<fieldset><legend>Enable and placements (choose any combination)</legend>';
+        echo '<div class="puc-settings-layout"><div class="puc-settings-controls"><h2>Behaviour and placement</h2><fieldset><legend>Enable and placements (choose any combination)</legend>';
         foreach ( array( 'enabled' => 'Enable converter globally', 'floating' => 'Floating button', 'header' => 'Header/menu button', 'footer' => 'Footer button', 'remember' => 'Remember visitor preference on this browser' ) as $key => $label ) {
             echo '<p><label><input type="checkbox" name="' . esc_attr( PUC_OPTION_KEY . '[' . $key . ']' ) . '" value="1"' . checked( $values[ $key ], 1, false ) . '> ' . esc_html( $label ) . '</label></p>';
         }
@@ -78,12 +87,18 @@ final class PUC_Settings {
         $this->select( 'default_unit', 'Initial units', array( 'in' => 'Inches', 'cm' => 'Centimetres' ), $values );
         $menus = get_registered_nav_menus(); unset( $menus['footer'] );
         $this->select( 'header_location', 'Header menu location (mobile menu fallback supported)', array( '' => 'Automatic DOM fallback' ) + $menus, $values );
-        foreach ( array( 'header_selector' => 'Optional header CSS selector', 'footer_selector' => 'Optional footer CSS selector', 'background_color' => 'Button background (six-digit hex)', 'text_color' => 'Button text (six-digit hex)', 'radius' => 'Button radius (0–100 px)', 'floating_offset' => 'Floating edge offset (0–200 px)' ) as $key => $label ) {
+        echo '<h2>Button appearance</h2>';
+        $properties = array( 'background_color' => '--puc-bg', 'text_color' => '--puc-text', 'radius' => '--puc-radius', 'floating_offset' => '--puc-offset' );
+        $defaults = self::defaults();
+        foreach ( array( 'background_color' => 'Button background colour', 'text_color' => 'Button text colour', 'radius' => 'Button radius (0–100 px)', 'floating_offset' => 'Floating edge offset (0–200 px)', 'header_selector' => 'Optional header CSS selector', 'footer_selector' => 'Optional footer CSS selector' ) as $key => $label ) {
             $numeric = in_array( $key, array( 'radius', 'floating_offset' ), true );
-            echo '<p><label for="puc-' . esc_attr( $key ) . '">' . esc_html( $label ) . '</label> <input id="puc-' . esc_attr( $key ) . '" type="' . ( $numeric ? 'number' : 'text' ) . '" name="' . esc_attr( PUC_OPTION_KEY . '[' . $key . ']' ) . '" value="' . esc_attr( (string) $values[ $key ] ) . '"' . ( $numeric ? ' min="0" max="' . ( 'radius' === $key ? '100' : '200' ) . '" step="1"' : ' maxlength="200"' ) . '></p>';
+            $color = in_array( $key, array( 'background_color', 'text_color' ), true );
+            $extra = isset( $properties[ $key ] ) ? ' data-css-var="' . esc_attr( $properties[ $key ] ) . '" data-default="' . esc_attr( (string) $defaults[ $key ] ) . '" data-unit="' . ( $numeric ? 'px' : '' ) . '"' : '';
+            if ( $color ) { $extra .= ' class="puc-color-picker" data-default-color="' . esc_attr( $defaults[ $key ] ) . '" pattern="#[a-fA-F0-9]{6}" maxlength="7" required aria-describedby="puc-preview-help"'; }
+            echo '<p><label for="puc-' . esc_attr( $key ) . '">' . esc_html( $label ) . '</label> <input id="puc-' . esc_attr( $key ) . '" type="' . ( $numeric ? 'number' : 'text' ) . '" name="' . esc_attr( PUC_OPTION_KEY . '[' . $key . ']' ) . '" value="' . esc_attr( (string) $values[ $key ] ) . '"' . $extra . ( $numeric ? ' min="0" max="' . ( 'radius' === $key ? '100' : '200' ) . '" step="1"' : ( $color ? '' : ' maxlength="200"' ) ) . '></p>';
         }
         echo '<p>Shortcode: <code>[portare_unit_toggle]</code> works independently of placements. Global disable removes all controls and frontend assets. Opt out a content subtree with <code>data-puc-ignore</code>. Leave selectors blank for automatic theme/builder fallback.</p>';
-        echo '<fieldset><legend>Static preview (not interactive)</legend><button type="button" disabled>Units: in</button> <button type="button" disabled>Units: cm</button></fieldset>';
-        submit_button(); echo '</form></div>';
+        submit_button(); echo '</div>';
+        echo '<aside id="puc-preview" class="puc-preview" aria-labelledby="puc-preview-title"><h2 id="puc-preview-title">Live button preview</h2><p id="puc-preview-help">Changes below are a preview only. Click Save Changes to apply them to the website. Click a preview button to try switching units.</p><div class="puc-preview-samples"><button type="button" class="puc-control" data-puc-preview-toggle data-puc-preview-unit="in" aria-label="Preview inches button" aria-pressed="false">Units: in</button><button type="button" class="puc-control" data-puc-preview-toggle data-puc-preview-unit="cm" aria-label="Preview centimetres button" aria-pressed="true">Units: cm</button></div><h3>Placement preview</h3><div class="puc-preview-canvas"><div class="puc-preview-header"><span>Site header</span><span data-puc-preview-placement="header"><button type="button" class="puc-control" data-puc-preview-toggle>Units: in</button></span></div><div class="puc-preview-content"><strong>Example product</strong><p data-puc-preview-measurement>72 inches</p><small>Selected placements are shown here.</small></div><div class="puc-preview-footer"><span>Site footer</span><span data-puc-preview-placement="footer"><button type="button" class="puc-control" data-puc-preview-toggle>Units: in</button></span></div><div class="puc-floating" data-puc-preview-placement="floating" data-position="' . esc_attr( $values['position'] ) . '"><button type="button" class="puc-control" data-puc-preview-toggle>Units: in</button></div></div><p class="puc-preview-message" role="status" aria-live="polite"></p><noscript><p>Enable JavaScript for the live preview and colour picker. You can still enter six-digit hex colours and save normally.</p></noscript></aside></div></form></div>';
     }
 }

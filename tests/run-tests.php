@@ -17,7 +17,7 @@ function setup_plugin( array $options = array() ): PUC_Plugin {
     $plugin = new PUC_Plugin( new PUC_Settings() ); $plugin->init(); return $plugin;
 }
 try {
-    same( PUC_VERSION, '0.1.0', 'version' );
+    same( PUC_VERSION, '0.1.1', 'version' );
     expect( isset( $GLOBALS['puc_test']['hooks']['plugins_loaded'] ), 'bootstrap is deferred to plugins_loaded' );
     do_action( 'plugins_loaded' );
     expect( isset( $GLOBALS['puc_test']['hooks']['admin_init'] ), 'bootstrap registers admin settings' );
@@ -88,7 +88,7 @@ try {
     same( count( $GLOBALS['puc_test']['scripts'] ), 1, 'one lightweight script' );
     same( count( $GLOBALS['puc_test']['styles'] ), 1, 'one stylesheet' );
     same( $GLOBALS['puc_test']['scripts']['puc-converter'][3], true, 'script in footer' );
-    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.0', 'versioned asset' );
+    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.1', 'versioned asset' );
     same( $GLOBALS['puc_test']['localized']['PUCConfig'], array( 'decimals' => 1, 'remember' => true, 'defaultUnit' => 'in', 'header' => false, 'footer' => false, 'headerSelector' => '', 'footerSelector' => '', 'position' => 'bottom-right' ), 'exact frontend configuration contract' );
     expect( false !== strpos( $GLOBALS['puc_test']['inline']['puc-converter'], '--puc-offset:20px' ), 'bounded custom properties emitted' );
     expect( ! isset( $GLOBALS['puc_test']['hooks']['the_content'] ) && ! isset( $GLOBALS['puc_test']['hooks']['woocommerce_available_variation'] ), 'no authored-content or commerce mutation hooks' );
@@ -127,6 +127,26 @@ try {
     expect( false === strpos( $html, '<script>' ), 'settings output rejects injection' );
     expect( false !== strpos( $html, '[portare_unit_toggle]' ) && false !== strpos( $html, 'data-puc-ignore' ), 'settings explain shortcode and opt-out' );
     expect( false !== strpos( $html, 'name="puc_settings[header_selector]"' ) && false !== strpos( $html, 'name="puc_settings[floating_offset]"' ), 'selector and dimension controls present' );
+    same( substr_count( $html, 'class="puc-color-picker"' ), 2, 'background and text have colour pickers' );
+    same( substr_count( $html, 'data-css-var=' ), 4, 'four scoped appearance bindings' );
+    expect( false !== strpos( $html, 'id="puc-preview"' ) && false !== strpos( $html, 'Live button preview' ), 'live preview region rendered' );
+    expect( false === strpos( $html, 'Static preview' ), 'old static preview removed' );
+    same( substr_count( $html, 'data-puc-preview-toggle' ), 5, 'unit samples and three placement examples rendered' );
+    expect( false !== strpos( $html, 'type="button"' ) && false !== strpos( $html, 'preview only' ), 'preview controls do not submit settings' );
+    $before_preview = get_option( PUC_OPTION_KEY );
+    puc_test_reset();
+    $settings->assets( 'dashboard' );
+    same( $GLOBALS['puc_test']['scripts'], array(), 'preview assets excluded on unrelated admin pages' );
+    $settings->assets( 'settings_page_portare-unit-converter' );
+    same( $GLOBALS['puc_test']['scripts']['puc-settings'][1], array( 'jquery', 'wp-color-picker' ), 'native picker dependencies registered' );
+    expect( isset( $GLOBALS['puc_test']['styles']['wp-color-picker'] ), 'native picker styles enqueued' );
+    expect( isset( $GLOBALS['puc_test']['styles']['puc-preview-buttons'] ), 'preview reuses frontend button stylesheet' );
+    expect( ! isset( $GLOBALS['puc_test']['scripts']['puc-converter'] ), 'sitewide converter never runs in admin preview' );
+    same( get_option( PUC_OPTION_KEY ), false, 'asset loading performs no settings writes' );
+    puc_test_reset();
+    $GLOBALS['puc_test']['capability'] = false;
+    $settings->assets( 'settings_page_portare-unit-converter' );
+    same( $GLOBALS['puc_test']['scripts'], array(), 'unauthorized users receive no preview assets' );
     $GLOBALS['puc_test']['capability'] = false; $denied = false;
     try { $settings->render(); } catch ( RuntimeException $exception ) { $denied = true; }
     expect( $denied, 'unauthorized rendering denied' );
