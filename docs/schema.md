@@ -37,3 +37,7 @@ Serialized WordPress option managed through the Settings API. Every key is non-n
 Boolean settings accept only literal integer `1` or string `"1"` as enabled. Browser key `puc_unit` stores only `in` or `cm`; no identifying data, preference cookies, or server profile. Implicit option values may be pinned to their original strings in the DOM so display labels cannot change form submissions.
 
 No seed data is required: activation initializes settings idempotently. No forward/reverse schema migration is needed because this does not modify database structure. Temporary browser QA sessions are kept outside the repository and revoked after verification.
+
+## 0.1.1 appearance update
+
+Native colour pickers and the live preview reuse exactly these existing keys. No new options, columns, tables, defaults, or migrations were added. Previewing writes only local DOM styles; persistence still occurs solely through Save Changes and the Settings API.
