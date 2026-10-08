@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "older settings get original label defaults without migration",
+    "label inputs enforce character limit",
+    "inch sample text updates while typing",
+    "centimetre sample text updates while typing",
+    "placement preview uses active custom label",
+    "custom-label preview does not change visitor preference",
+    "unsaved label edits do not post or change stored settings",
+    "labels persist through real Settings API save",
+    "existing gold colour and radius preserved by save",
+    "saved labels reload in settings and preview",
+    "every desktop/mobile/header/footer/floating control starts with inch label",
+    "real header and footer label controls present",
+    "all controls synchronize to custom metric label",
+    "custom button labels do not change measurement conversion units",
+    "accessible name includes custom label and next-unit action",
+    "header custom label toggle restores exact original measurements",
+    "remembered mode applies custom metric label on next page",
+    "custom labels do not create mobile page overflow",
+    "mobile menu has synchronized custom text",
+    "blank label defaults and HTML tags are removed safely on save",
+    "sanitized ampersand label renders as text with no injected markup",
+    "longer custom label renders completely",
+    "long label wraps without phone horizontal overflow",
+    "frontend CSS permits label wrapping",
+    "no label-preview or frontend JavaScript exceptions",
+    "original operator settings restored byte-for-value after verification"
+  ],
+  "count": 26,
+  "errors": []
+}
