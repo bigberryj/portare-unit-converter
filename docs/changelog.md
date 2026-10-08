@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2 — 2026-10-08
+
+- Added separate inch/centimetre button text fields with original wording as defaults.
+- Applied custom labels to every frontend control, shortcode, dynamic fallback and live preview, including accessible names.
+- Added plain-text sanitization, empty-label fallback, Unicode-safe 60-character bounds, and responsive wrapping.
+- Extended the existing settings option with label_in/label_cm; no authored content or product data migration.
+
 ## 0.1.1 — 2026-10-06
 
 - Added native WordPress color pickers for background and text, keeping strict six-digit hex validation.

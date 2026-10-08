@@ -14,7 +14,10 @@
   letter-spacing: normal;
   text-decoration: none;
   text-transform: none;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(18rem, calc(100vw - 2rem));
+  overflow-wrap: anywhere;
+  text-align: center;
   cursor: pointer;
   touch-action: manipulation;
   transition: none !important;

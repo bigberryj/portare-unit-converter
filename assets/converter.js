@@ -72,6 +72,10 @@
     var doc = win.document;
     var config = Object.assign({ decimals: 1, remember: true, defaultUnit: 'in', header: false, footer: false, headerSelector: '', footerSelector: '', position: 'bottom-right' }, options);
     var unit = config.defaultUnit === 'cm' ? 'cm' : 'in';
+    function buttonLabel(mode) {
+      var value = config.labels && config.labels[mode];
+      return typeof value === 'string' && value.trim() ? Array.from(value.trim()).slice(0, 60).join('') : 'Units: ' + mode;
+    }
     var records = new WeakMap(), tracked = new Set(), dirty = new Set();
     var timer = null, destroyed = false, storageBlocked = false, flushCount = 0;
     if (config.remember) {
@@ -118,10 +122,11 @@
     function sync(announce) {
       doc.querySelectorAll('[data-puc-toggle]').forEach(function (el) {
         el.setAttribute('aria-pressed', String(unit === 'cm'));
-        el.setAttribute('aria-label', 'Units: ' + unit + '. Switch to ' + (unit === 'cm' ? 'inches' : 'centimeters'));
+        var text = buttonLabel(unit);
+        el.setAttribute('aria-label', text + '. Showing ' + (unit === 'cm' ? 'centimeters' : 'inches') + '. Switch to ' + (unit === 'cm' ? 'inches' : 'centimeters'));
         var label = el.querySelector('[data-puc-label]');
-        if (label) label.textContent = 'Units: ' + unit;
-        else el.textContent = 'Units: ' + unit;
+        if (label) label.textContent = text;
+        else el.textContent = text;
       });
       if (announce || storageBlocked) status.textContent = (unit === 'cm' ? 'Measurements shown in centimeters.' : 'Original inch measurements restored.') + (storageBlocked ? ' Your preference cannot be saved in this browser.' : '');
       status.classList.toggle('puc-status--visible', storageBlocked);

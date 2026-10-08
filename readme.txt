@@ -3,7 +3,7 @@ Contributors: bigberryj
 Tags: inches, centimetres, units, display
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: MIT
 
 Display-only inches to centimetres toggle. No WooCommerce dependency.
@@ -37,6 +37,9 @@ Use [portare_unit_toggle] in an element that renders WordPress shortcodes. It wo
 Yes. WordPress colour pickers and a live preview update the button background, text colour, radius, edge offset and placement immediately. Preview buttons demonstrate both unit states. Changes stay inside the settings preview until Save Changes; the live website and browser unit preference are not modified by preview clicks.
 
 == Changelog ==
+= 0.1.2 =
+Custom text for each unit button state, immediate label preview, safe plain-text validation, and responsive label wrapping. Defaults retain the original wording.
+
 = 0.1.1 =
 Native colour pickers, scoped live button/placement preview and responsive settings layout. Existing settings are preserved.
 

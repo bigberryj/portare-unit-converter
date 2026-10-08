@@ -23,7 +23,7 @@ test('real PHP settings HTML initializes live preview and saved defaults without
   assert.equal(s.preview.querySelector('[data-puc-preview-placement="floating"]').hidden, false);
   assert.equal(s.preview.querySelector('[data-puc-preview-placement="header"]').hidden, true);
   assert.equal(s.doc.querySelectorAll('.puc-color-picker').length, 2);
-  assert.equal(s.doc.querySelectorAll('[name^="puc_settings["]').length, 15);
+  assert.equal(s.doc.querySelectorAll('[name^="puc_settings["]').length, 17);
   s.win.close();
 });
 test('colour and dimensions update immediately and remain scoped to preview', () => {

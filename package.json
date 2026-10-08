@@ -1,6 +1,6 @@
 {
   "name": "portare-unit-converter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Automated display-only inches-to-centimeters conversion tests",
   "scripts": { "test": "node --test tests/*.test.cjs" },

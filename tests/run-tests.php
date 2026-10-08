@@ -17,7 +17,7 @@ function setup_plugin( array $options = array() ): PUC_Plugin {
     $plugin = new PUC_Plugin( new PUC_Settings() ); $plugin->init(); return $plugin;
 }
 try {
-    same( PUC_VERSION, '0.1.1', 'version' );
+    same( PUC_VERSION, '0.1.2', 'version' );
     expect( isset( $GLOBALS['puc_test']['hooks']['plugins_loaded'] ), 'bootstrap is deferred to plugins_loaded' );
     do_action( 'plugins_loaded' );
     expect( isset( $GLOBALS['puc_test']['hooks']['admin_init'] ), 'bootstrap registers admin settings' );
@@ -31,6 +31,22 @@ try {
     same( $d['radius'], 8, 'radius default' ); same( $d['floating_offset'], 20, 'offset default' );
     same( $d['header_location'], 'menu_1', 'Blocksy main menu default' );
     same( $settings->get(), $d, 'fresh options resolve defaults' );
+    same( $d['label_in'], 'Units: in', 'inch label keeps original default' );
+    same( $d['label_cm'], 'Units: cm', 'metric label keeps original default' );
+    same( $settings->sanitize( array( 'label_in' => 'Imperial', 'label_cm' => 'Metric' ) )['label_cm'], 'Metric', 'custom metric label accepted' );
+    same( PUC_Settings::label( '  Inches   & feet  ', 'default' ), 'Inches & feet', 'label whitespace normalized' );
+    same( PUC_Settings::label( '<b>Metric</b>', 'default' ), 'Metric', 'label HTML stripped' );
+    same( PUC_Settings::label( '   ', 'Units: in' ), 'Units: in', 'blank label defaults' );
+    same( PUC_Settings::label( array( 'malicious' ), 'Units: cm' ), 'Units: cm', 'array labels rejected' );
+    same( PUC_Settings::label( str_repeat( 'A', 75 ), 'default' ), str_repeat( 'A', 60 ), 'label length bounded' );
+    same( PUC_Settings::label( str_repeat( 'é', 75 ), 'default' ), str_repeat( 'é', 60 ), 'Unicode label truncation remains valid' );
+    update_option( PUC_OPTION_KEY, array( 'label_in' => 'Inches & imperial', 'label_cm' => 'Metric' ) );
+    $label_plugin = new PUC_Plugin( $settings );
+    expect( false !== strpos( $label_plugin->button(), 'Inches &amp; imperial' ), 'PHP button label escaped' );
+    ob_start(); $settings->render(); $label_html = ob_get_clean();
+    expect( false !== strpos( $label_html, 'name="puc_settings[label_in]"' ) && false !== strpos( $label_html, 'name="puc_settings[label_cm]"' ), 'both label settings rendered' );
+    expect( false !== strpos( $label_html, 'maxlength="60"' ), 'labels explain bounded text' );
+    puc_test_reset();
     foreach ( array( array(), '1x', true, 1.0, -1, 'true', 2, null ) as $value ) {
         same( $settings->sanitize( array( 'enabled' => $value ) )['enabled'], 0, 'non-literal flag rejected: ' . gettype( $value ) );
     }
@@ -88,8 +104,8 @@ try {
     same( count( $GLOBALS['puc_test']['scripts'] ), 1, 'one lightweight script' );
     same( count( $GLOBALS['puc_test']['styles'] ), 1, 'one stylesheet' );
     same( $GLOBALS['puc_test']['scripts']['puc-converter'][3], true, 'script in footer' );
-    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.1', 'versioned asset' );
-    same( $GLOBALS['puc_test']['localized']['PUCConfig'], array( 'decimals' => 1, 'remember' => true, 'defaultUnit' => 'in', 'header' => false, 'footer' => false, 'headerSelector' => '', 'footerSelector' => '', 'position' => 'bottom-right' ), 'exact frontend configuration contract' );
+    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.2', 'versioned asset' );
+    same( $GLOBALS['puc_test']['localized']['PUCConfig'], array( 'decimals' => 1, 'remember' => true, 'defaultUnit' => 'in', 'header' => false, 'footer' => false, 'headerSelector' => '', 'footerSelector' => '', 'position' => 'bottom-right', 'labels' => array( 'in' => 'Units: in', 'cm' => 'Units: cm' ) ), 'exact frontend configuration contract' );
     expect( false !== strpos( $GLOBALS['puc_test']['inline']['puc-converter'], '--puc-offset:20px' ), 'bounded custom properties emitted' );
     expect( ! isset( $GLOBALS['puc_test']['hooks']['the_content'] ) && ! isset( $GLOBALS['puc_test']['hooks']['woocommerce_available_variation'] ), 'no authored-content or commerce mutation hooks' );
     $plugin = setup_plugin( array( 'header' => 1, 'footer' => 1 ) );

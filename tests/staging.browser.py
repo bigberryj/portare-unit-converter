@@ -44,7 +44,7 @@ with sync_playwright() as p:
   page.locator('.puc-floating [data-puc-toggle]').click();page.wait_for_timeout(150)
  defaults=dict(enabled=1,floating=1,header=0,footer=0,remember=1,default_unit='in',decimals=1,position='bottom-right',header_location='menu_1',header_selector='',footer_selector='',background_color='#173942',text_color='#ffffff',radius=8,floating_offset=20)
  try:
-  settings();check(admin.locator('[name^="puc_settings["]').count()==15,'authenticated settings exposes all 15 controls')
+  settings();check(admin.locator('[name^="puc_settings["]').count()==17,'authenticated settings exposes all 17 controls')
   admin.screenshot(path=str(OUT/'settings.png'),full_page=True)
   go('/portare-buffet-service-tables/')
   check(page.locator('.puc-floating').count()==1 and page.locator('.puc-menu-item').count()==0,'default floating-only placement on real Brizy page')

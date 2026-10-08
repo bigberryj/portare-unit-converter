@@ -1,6 +1,6 @@
 # Portare Unit Converter
 
-Display-only inch-to-centimeter switching for WordPress, including Brizy-rendered content, WooCommerce labels, and asynchronously opened Portare quote forms. Version 0.1.1.
+Display-only inch-to-centimeter switching for WordPress, including Brizy-rendered content, WooCommerce labels, and asynchronously opened Portare quote forms. Version 0.1.2.
 
 ## Installation
 
@@ -16,6 +16,7 @@ PHP 7.4+ and WordPress 6.0+. No WooCommerce dependency, external service, conver
 - Enable or disable the complete frontend enhancement.
 - Independently select floating, header, and footer placements; all switches share one visitor preference.
 - Select any floating corner, offset, colors, and radius.
+- Edit the button text separately for inches and centimeters. Labels describe the active units, apply to all placements and the shortcode, and update both preview samples immediately. Plain text only, maximum 60 characters; blank labels revert to `Units: in` / `Units: cm`. Longer labels wrap on smaller screens.
 - Pick background/text colors with the WordPress color picker, or type a six-digit hex value. The live preview updates immediately as you change colors, radius, edge spacing, placements, initial units, and rounding.
 - Preview inches and centimeters side by side, and click a preview button to try the example. Previewing never saves settings or changes a visitor's unit preference; click **Save Changes** to apply the configuration to the website. Invalid hex values keep the last valid preview color and show validation help.
 - Choose header menu location; desktop/mobile menu integration includes a DOM fallback for page-builder headers.

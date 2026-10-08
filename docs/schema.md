@@ -33,6 +33,8 @@ Serialized WordPress option managed through the Settings API. Every key is non-n
 | text_color | strict six-digit hex color | #ffffff |
 | radius | integer 0–100 px | 8 |
 | floating_offset | integer 0–200 px | 20 |
+| label_in | nonempty plain-text string, maximum 60 Unicode characters | Units: in |
+| label_cm | nonempty plain-text string, maximum 60 Unicode characters | Units: cm |
 
 Boolean settings accept only literal integer `1` or string `"1"` as enabled. Browser key `puc_unit` stores only `in` or `cm`; no identifying data, preference cookies, or server profile. Implicit option values may be pinned to their original strings in the DOM so display labels cannot change form submissions.
 
@@ -41,3 +43,7 @@ No seed data is required: activation initializes settings idempotently. No forwa
 ## 0.1.1 appearance update
 
 Native colour pickers and the live preview reuse exactly these existing keys. No new options, columns, tables, defaults, or migrations were added. Previewing writes only local DOM styles; persistence still occurs solely through Save Changes and the Settings API.
+
+## 0.1.2 label update
+
+Two keys extend the same serialized option. Forward upgrade resolves absent keys to the original button wording without updating existing saved values; the next normal settings save persists them. Blank, non-string or unusable input falls back to defaults; tags are stripped, whitespace normalized and Unicode text bounded. Reverse upgrade to 0.1.1 ignores these keys, leaving all existing settings usable. No database structural migration, new option namespace, seed data or content rewrite is required.

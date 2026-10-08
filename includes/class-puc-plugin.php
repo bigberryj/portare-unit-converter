@@ -37,11 +37,12 @@ final class PUC_Plugin {
         $o = $this->settings->get();
         wp_enqueue_style( 'puc-converter', plugins_url( 'assets/converter.css', PUC_PLUGIN_FILE ), array(), PUC_VERSION );
         wp_enqueue_script( 'puc-converter', plugins_url( 'assets/converter.js', PUC_PLUGIN_FILE ), array(), PUC_VERSION, true );
-        wp_localize_script( 'puc-converter', 'PUCConfig', array( 'decimals' => $o['decimals'], 'remember' => (bool) $o['remember'], 'defaultUnit' => $o['default_unit'], 'header' => (bool) $o['header'], 'footer' => (bool) $o['footer'], 'headerSelector' => $o['header_selector'], 'footerSelector' => $o['footer_selector'], 'position' => $o['position'] ) );
+        wp_localize_script( 'puc-converter', 'PUCConfig', array( 'decimals' => $o['decimals'], 'remember' => (bool) $o['remember'], 'defaultUnit' => $o['default_unit'], 'header' => (bool) $o['header'], 'footer' => (bool) $o['footer'], 'headerSelector' => $o['header_selector'], 'footerSelector' => $o['footer_selector'], 'position' => $o['position'], 'labels' => array( 'in' => $o['label_in'], 'cm' => $o['label_cm'] ) ) );
         wp_add_inline_style( 'puc-converter', ':root{--puc-bg:' . $o['background_color'] . ';--puc-text:' . $o['text_color'] . ';--puc-radius:' . $o['radius'] . 'px;--puc-offset:' . $o['floating_offset'] . 'px;}' );
     }
     public function button(): string {
-        return '<button type="button" class="puc-control" data-puc-toggle aria-pressed="false"><span data-puc-label>' . esc_html__( 'Units: in', 'portare-unit-converter' ) . '</span></button>';
+        $label = $this->settings->get()['label_in'];
+        return '<button type="button" class="puc-control" data-puc-toggle aria-pressed="false"><span data-puc-label>' . esc_html( $label ) . '</span></button>';
     }
     public function shortcode( $attributes = array(), $content = null ): string { return $this->available() ? $this->button() : ''; }
     public function menu_items( $items, $args ): string {

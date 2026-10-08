@@ -30,6 +30,11 @@
         preview.style.setProperty(property, n + 'px');
       }
     }
+    function label(mode) {
+      var input = field('label_' + mode);
+      var text = input ? input.value.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : '';
+      return text ? Array.from(text).slice(0, 60).join('') : 'Units: ' + mode;
+    }
     function render() {
       fields.forEach(function (input) { apply(input, input.value); });
       var invalid = fields.some(function (input) { return properties[input.dataset.cssVar] === 'color' && !/^#[a-fA-F0-9]{6}$/.test(input.value); });
@@ -43,10 +48,11 @@
       if (['top-left', 'top-right', 'bottom-left', 'bottom-right'].indexOf(position) !== -1) {
         preview.querySelector('.puc-floating').setAttribute('data-position', position);
       }
-      preview.querySelectorAll('[data-puc-preview-placement] [data-puc-preview-toggle]').forEach(function (button) {
-        button.textContent = 'Units: ' + unit;
-        button.setAttribute('aria-pressed', String(unit === 'cm'));
-        button.setAttribute('aria-label', 'Preview units: ' + unit + '. Switch preview units.');
+      preview.querySelectorAll('[data-puc-preview-toggle]').forEach(function (button) {
+        var mode = button.dataset.pucPreviewUnit || unit;
+        button.textContent = label(mode);
+        button.setAttribute('aria-pressed', String(mode === 'cm'));
+        button.setAttribute('aria-label', label(mode) + '. Preview ' + (mode === 'cm' ? 'centimeters' : 'inches') + ' button.');
       });
       var decimals = Number(field('decimals').value);
       if (!Number.isInteger(decimals) || decimals < 0 || decimals > 3) decimals = 1;
