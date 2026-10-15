@@ -46,13 +46,15 @@
       var prev = before.slice(-1);
       if (/[\w./'′+\-–—¼½¾⅐-⅞]/u.test(prev) || /[“"]$/.test(before)) return match;
       if (protectedSpans.some(function (span) { return offset < span[1] && offset + match.length > span[0]; })) return match;
-      if (/^\s*(?:[²³^]|sq\b|square\b|cub(?:ic|ed)\b)/i.test(after)) return match;
+      if (/^\s*(?:[²³^]|[([{]?\s*(?:sq\b|square\b|cub(?:ic|ed)\b))/i.test(after)) return match;
       if (/\b(?:square|cubic|sq\.)\s*$/i.test(before)) return match;
       // Bare English "in" remains strict. Quote markers may precede a
       // dimensional suffix or known dimension prose (real catalog labels).
       var ending = /^(?:\s*$|\s*[,.;:!?\)\]\}]|\s*[x×]\s*(?:\d|\.\d))/;
       if (unit.toLowerCase() === 'in' && !ending.test(after)) return match;
-      if (/^["″”]$/.test(unit) && !ending.test(after) && !/^\s*(?:[hHlLwWdD]\b|(?:wide|deep|high|long|tall|thick|diameter|width|height|length|depth)\b)/i.test(after)) return match;
+      // Explicit inch symbols can end a dimension before an annotation, e.g.
+      // 30″ x 72″ (seats 6). Keep bare English "in" on its stricter path.
+      if (/^["″”]$/.test(unit) && !ending.test(after) && !/^\s*[([{]/.test(after) && !/^\s*(?:[hHlLwWdD]\b|(?:wide|deep|high|long|tall|thick|diameter|width|height|length|depth)\b)/i.test(after)) return match;
       // Do not convert URL fragments, SKU/model tokens, or thousands notation.
       var tokenStart = Math.max(before.lastIndexOf(' '), before.lastIndexOf('\n'), before.lastIndexOf('\t')) + 1;
       var token = before.slice(tokenStart) + match + (after.match(/^\S*/) || [''])[0];

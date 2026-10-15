@@ -17,7 +17,7 @@ function setup_plugin( array $options = array() ): PUC_Plugin {
     $plugin = new PUC_Plugin( new PUC_Settings() ); $plugin->init(); return $plugin;
 }
 try {
-    same( PUC_VERSION, '0.1.2', 'version' );
+    same( PUC_VERSION, '0.1.3', 'version' );
     expect( isset( $GLOBALS['puc_test']['hooks']['plugins_loaded'] ), 'bootstrap is deferred to plugins_loaded' );
     do_action( 'plugins_loaded' );
     expect( isset( $GLOBALS['puc_test']['hooks']['admin_init'] ), 'bootstrap registers admin settings' );
@@ -104,7 +104,7 @@ try {
     same( count( $GLOBALS['puc_test']['scripts'] ), 1, 'one lightweight script' );
     same( count( $GLOBALS['puc_test']['styles'] ), 1, 'one stylesheet' );
     same( $GLOBALS['puc_test']['scripts']['puc-converter'][3], true, 'script in footer' );
-    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.2', 'versioned asset' );
+    same( $GLOBALS['puc_test']['scripts']['puc-converter'][2], '0.1.3', 'versioned asset' );
     same( $GLOBALS['puc_test']['localized']['PUCConfig'], array( 'decimals' => 1, 'remember' => true, 'defaultUnit' => 'in', 'header' => false, 'footer' => false, 'headerSelector' => '', 'footerSelector' => '', 'position' => 'bottom-right', 'labels' => array( 'in' => 'Units: in', 'cm' => 'Units: cm' ) ), 'exact frontend configuration contract' );
     expect( false !== strpos( $GLOBALS['puc_test']['inline']['puc-converter'], '--puc-offset:20px' ), 'bounded custom properties emitted' );
     expect( ! isset( $GLOBALS['puc_test']['hooks']['the_content'] ) && ! isset( $GLOBALS['puc_test']['hooks']['woocommerce_available_variation'] ), 'no authored-content or commerce mutation hooks' );

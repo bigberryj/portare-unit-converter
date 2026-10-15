@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3 — 2026-10-15
+
+- Fixed inch-symbol measurements before parenthesized or bracketed annotations, including `Rectangle 30″ x 72″ (seats 6)`; both dimensions now convert while the seating count stays unchanged.
+- Kept ambiguous bare-English `in`, quoted prose, feet compounds and area/volume notation protected.
+- Added exact-title, punctuation/quote-variant, dynamic option-value and reversible DOM regression tests. No settings, product content or database schema changes.
+
 ## 0.1.2 — 2026-10-08
 
 - Added separate inch/centimetre button text fields with original wording as defaults.

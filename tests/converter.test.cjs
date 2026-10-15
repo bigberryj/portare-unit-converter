@@ -32,7 +32,14 @@ const conversions = [
   ['(24 in), [36 inches]', '(61 cm), [91.4 cm]'], ['24\tinches', '61 cm'],
   ['One size fits all 72" L x 30" W', 'One size fits all 182.9 cm L x 76.2 cm W'],
   ['72" L x 30" W', '182.9 cm L x 76.2 cm W'],
-  ['3/8″ wide space', '1 cm wide space'], ['30" h', '76.2 cm h']
+  ['3/8″ wide space', '1 cm wide space'], ['30" h', '76.2 cm h'],
+  ['Rectangle 30″ x 72″ (seats 6)', 'Rectangle 76.2 cm x 182.9 cm (seats 6)'],
+  ['Rectangle 30" x 72" (seats 6)', 'Rectangle 76.2 cm x 182.9 cm (seats 6)'],
+  ['Rectangle 30” × 72” (seats 6)', 'Rectangle 76.2 cm × 182.9 cm (seats 6)'],
+  ['Rectangle 30″ x 72″(seats 6)', 'Rectangle 76.2 cm x 182.9 cm(seats 6)'],
+  ['30″ x 72″ [seats 6]', '76.2 cm x 182.9 cm [seats 6]'],
+  ['30″ x 72″ {seats 6}', '76.2 cm x 182.9 cm {seats 6}'],
+  ['30 x 72″ (seats 6)', '76.2 x 182.9 cm (seats 6)']
 ];
 for (const [source, expected] of conversions) test('convert: ' + source, () => assert.equal(convertText(source), expected));
 const unchanged = [
@@ -41,7 +48,8 @@ const unchanged = [
   '24 inches²', '24 inches³', '24 inches^2', '24 inches square', '24 inches cubed', '24 square inches',
   'square 24 inches', '-24 inches', '+24 inches', '1/0 inch', '1 1/0 inch', '1,200 inches',
   'SKU24in', 'Model-24in', 'v1.24in', 'https://example.com/24in', 'https://example.com/24inches',
-  'www.example.com/24in', '/products/24in', '“24”', '"24"', 'He said 24" hello', '2 inside', '24inchwide'
+  'www.example.com/24in', '/products/24in', '“24”', '"24"', 'He said 24" hello', '2 inside', '24inchwide',
+  '2 in (London)', '“24” (a quoted number)', '6′ 2″ (height)', '72″ (square inches)'
 ];
 for (const source of unchanged) test('leave ambiguous/unsupported: ' + source, () => assert.equal(convertText(source), source));
 test('configurable precision, finite limits and trimmed zeros', () => {
@@ -51,6 +59,24 @@ test('configurable precision, finite limits and trimmed zeros', () => {
   assert.equal(convertText('1 inch', 100), '2.5 cm');
   assert.equal(convertText('1000001 inches'), '1000001 inches');
   assert.equal(convertText(null), null);
+});
+
+test('annotated product titles convert every dimension, preserve seats and restore without drift', async t => {
+  const source = 'Rectangle 30″ x 72″ (seats 6)';
+  const expected = 'Rectangle 76.2 cm x 182.9 cm (seats 6)';
+  const { doc, win, instance } = fixture(t, '<h2 id="title">' + source + '</h2>' + toggle);
+  const title = doc.getElementById('title');
+  const originalNode = title.firstChild;
+  for (let i = 0; i < 10; i++) {
+    instance.setUnit('cm'); assert.equal(title.textContent, expected);
+    instance.setUnit('in'); assert.equal(title.textContent, source);
+  }
+  assert.equal(title.firstChild, originalNode);
+  instance.setUnit('cm');
+  const option = doc.createElement('option'); option.value = '30x72'; option.textContent = source;
+  const select = doc.createElement('select'); select.append(option); doc.body.append(select);
+  await settle(win); assert.equal(option.textContent, expected); assert.equal(select.value, '30x72');
+  instance.setUnit('in'); assert.equal(option.textContent, source); assert.equal(select.value, '30x72');
 });
 
 test('exact reversible text, identity, markup, attributes and form values', t => {
