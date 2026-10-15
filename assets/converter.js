@@ -54,7 +54,7 @@
       if (unit.toLowerCase() === 'in' && !ending.test(after)) return match;
       // Explicit inch symbols can end a dimension before an annotation, e.g.
       // 30″ x 72″ (seats 6). Keep bare English "in" on its stricter path.
-      if (/^["″”]$/.test(unit) && !ending.test(after) && !/^\s*[([{]/.test(after) && !/^\s*(?:[hHlLwWdD]\b|(?:wide|deep|high|long|tall|thick|diameter|width|height|length|depth)\b)/i.test(after)) return match;
+      if (/^["″”]$/.test(unit) && !ending.test(after) && !/^\s*[([{]/.test(after) && !/^\s*(?:[hHlLwWdD]\b|(?:wide|deep|high|long|tall|thick|dia(?:m(?:eter)?)?|width|height|length|depth)\b)/i.test(after)) return match;
       // Do not convert URL fragments, SKU/model tokens, or thousands notation.
       var tokenStart = Math.max(before.lastIndexOf(' '), before.lastIndexOf('\n'), before.lastIndexOf('\t')) + 1;
       var token = before.slice(tokenStart) + match + (after.match(/^\S*/) || [''])[0];

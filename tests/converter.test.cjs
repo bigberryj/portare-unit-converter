@@ -39,7 +39,15 @@ const conversions = [
   ['Rectangle 30″ x 72″(seats 6)', 'Rectangle 76.2 cm x 182.9 cm(seats 6)'],
   ['30″ x 72″ [seats 6]', '76.2 cm x 182.9 cm [seats 6]'],
   ['30″ x 72″ {seats 6}', '76.2 cm x 182.9 cm {seats 6}'],
-  ['30 x 72″ (seats 6)', '76.2 x 182.9 cm (seats 6)']
+  ['30 x 72″ (seats 6)', '76.2 x 182.9 cm (seats 6)'],
+  ['Round 60″ Dia', 'Round 152.4 cm Dia'],
+  ['Round 60″ Dia.', 'Round 152.4 cm Dia.'],
+  ['Round 60" dia', 'Round 152.4 cm dia'],
+  ['Round 60” DIA', 'Round 152.4 cm DIA'],
+  ['Round 60″ Diam', 'Round 152.4 cm Diam'],
+  ['Round 60" Diam.', 'Round 152.4 cm Diam.'],
+  ['Round 60″ Diameter', 'Round 152.4 cm Diameter'],
+  ['Round 60″ dia (seats 6)', 'Round 152.4 cm dia (seats 6)']
 ];
 for (const [source, expected] of conversions) test('convert: ' + source, () => assert.equal(convertText(source), expected));
 const unchanged = [
@@ -49,7 +57,8 @@ const unchanged = [
   'square 24 inches', '-24 inches', '+24 inches', '1/0 inch', '1 1/0 inch', '1,200 inches',
   'SKU24in', 'Model-24in', 'v1.24in', 'https://example.com/24in', 'https://example.com/24inches',
   'www.example.com/24in', '/products/24in', '“24”', '"24"', 'He said 24" hello', '2 inside', '24inchwide',
-  '2 in (London)', '“24” (a quoted number)', '6′ 2″ (height)', '72″ (square inches)'
+  '2 in (London)', '“24” (a quoted number)', '6′ 2″ (height)', '72″ (square inches)',
+  'He said 60" dialogue', 'He said 60" diagram', 'We met 2 in Diana’s office'
 ];
 for (const source of unchanged) test('leave ambiguous/unsupported: ' + source, () => assert.equal(convertText(source), source));
 test('configurable precision, finite limits and trimmed zeros', () => {
@@ -77,6 +86,24 @@ test('annotated product titles convert every dimension, preserve seats and resto
   const select = doc.createElement('select'); select.append(option); doc.body.append(select);
   await settle(win); assert.equal(option.textContent, expected); assert.equal(select.value, '30x72');
   instance.setUnit('in'); assert.equal(option.textContent, source); assert.equal(select.value, '30x72');
+});
+
+test('related-product diameter labels preserve links and restore, including dynamically inserted cards', async t => {
+  const source = 'Round 60″ Dia';
+  const expected = 'Round 152.4 cm Dia';
+  const html = '<section id="related"><article><a href="/product/the-portable-round-table/"><img src="round.jpg" alt="Round 60″ Dia"></a><span class="brz-wp-title-content">' + source + '</span></article></section>';
+  const { doc, win, instance } = fixture(t, html + toggle);
+  const original = doc.getElementById('related').innerHTML;
+  instance.setUnit('cm');
+  assert.equal(doc.querySelector('.brz-wp-title-content').textContent, expected);
+  assert.equal(doc.querySelector('a').getAttribute('href'), '/product/the-portable-round-table/');
+  assert.equal(doc.querySelector('img').getAttribute('alt'), source);
+  const card = doc.createElement('article'); const title = doc.createElement('span');
+  title.textContent = source; card.append(title); doc.body.append(card);
+  await settle(win); assert.equal(title.textContent, expected);
+  instance.setUnit('in');
+  assert.equal(doc.getElementById('related').innerHTML, original);
+  assert.equal(title.textContent, source);
 });
 
 test('exact reversible text, identity, markup, attributes and form values', t => {

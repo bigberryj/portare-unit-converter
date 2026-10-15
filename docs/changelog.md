@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 — 2026-10-15
+
+- Recognize Dia/Dia./Diam/Diam. diameter abbreviations after inch symbols, including the related-product title `Round 60″ Dia`.
+- Preserve spelling, punctuation, links and stored titles while converting only the measurement; case-insensitive suffix matching retains whole-word boundaries.
+- Added related-card/dynamic-card restoration tests and checks excluding unrelated words such as diagram/dialogue. The parenthetical-dimension fix remains covered. No settings or database changes.
+
 ## 0.1.3 — 2026-10-15
 
 - Fixed inch-symbol measurements before parenthesized or bracketed annotations, including `Rectangle 30″ x 72″ (seats 6)`; both dimensions now convert while the seating count stays unchanged.

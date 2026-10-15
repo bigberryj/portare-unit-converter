@@ -3,7 +3,7 @@ Contributors: bigberryj
 Tags: inches, centimetres, units, display
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: MIT
 
 Display-only inches to centimetres toggle. No WooCommerce dependency.
@@ -37,6 +37,9 @@ Use [portare_unit_toggle] in an element that renders WordPress shortcodes. It wo
 Yes. WordPress colour pickers and a live preview update the button background, text colour, radius, edge offset and placement immediately. Preview buttons demonstrate both unit states. Changes stay inside the settings preview until Save Changes; the live website and browser unit preference are not modified by preview clicks.
 
 == Changelog ==
+= 0.1.4 =
+Fixed diameter abbreviations after inch symbols, including related-product titles like Round 60″ Dia. Supports Dia/Diam with optional period; keeps whole-word safeguards and exact restoration.
+
 = 0.1.3 =
 Fixed the last inch measurement being skipped before parenthetical annotations such as (seats 6). Added regression coverage while preserving ambiguity and unsupported-unit safeguards.
 

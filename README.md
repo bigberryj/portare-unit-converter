@@ -1,6 +1,6 @@
 # Portare Unit Converter
 
-Display-only inch-to-centimeter switching for WordPress, including Brizy-rendered content, WooCommerce labels, and asynchronously opened Portare quote forms. Version 0.1.3.
+Display-only inch-to-centimeter switching for WordPress, including Brizy-rendered content, WooCommerce labels, and asynchronously opened Portare quote forms. Version 0.1.4.
 
 ## Installation
 
