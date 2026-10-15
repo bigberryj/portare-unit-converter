@@ -1,7 +1,7 @@
 """Public, read-only staging regression for dimensions before seating annotations.
 Requires Python Playwright; does not save settings, submit quotes, or edit content.
 """
-import json,os
+import json,os,re
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 ORIGIN=os.environ.get('PUC_ORIGIN','https://portare.up.railway.app')
@@ -9,7 +9,11 @@ CHROME=os.environ.get('PUC_CHROME','/home/byron/.cache/ms-playwright/chromium-12
 PATH='/product/the-portable-folding-table/'
 SOURCE='Rectangle 30″ x 72″ (seats 6)'
 EXPECTED='Rectangle 76.2 cm x 182.9 cm (seats 6)'
-out=Path(__file__).resolve().parents[1]/'evidence/parenthesis-0.1.3';out.mkdir(parents=True,exist_ok=True)
+root=Path(__file__).resolve().parents[1]
+version_match=re.search(r'\* Version:\s*(\S+)',(root/'portare-unit-converter.php').read_text())
+if version_match is None:raise RuntimeError('Plugin version header missing')
+VERSION=version_match.group(1)
+out=root/('evidence/parenthesis-'+VERSION);out.mkdir(parents=True,exist_ok=True)
 checks=[];errors=[]
 def check(ok,label):
  if not ok:raise AssertionError(label)
@@ -21,7 +25,7 @@ with sync_playwright() as p:
    context=browser.new_context(viewport={'width':width,'height':height});page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
    response=page.goto(ORIGIN+PATH,wait_until='domcontentloaded',timeout=90000);page.wait_for_function('!!window.__pucInstance');page.get_by_text(SOURCE,exact=True).first.wait_for()
    check(response.status==200,name+': reported product page responds 200')
-   check(page.locator('script[src*="assets/converter.js?ver=0.1.3"]').count()==1,name+': plain page URL loads cache-busted fixed asset')
+   check(page.locator('script[src*="assets/converter.js?ver='+VERSION+'"]').count()==1,name+': plain page URL loads cache-busted fixed asset')
    count=page.inner_text('body').count(SOURCE);check(count>0,name+': original reported title visible')
    page.evaluate('''source=>{const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);window.__pucTitleNodes=[];let n;while(n=w.nextNode())if(n.data.includes(source))window.__pucTitleNodes.push([n,n.data]);}''',SOURCE)
    page.locator('[data-puc-toggle]:visible').first.click();page.wait_for_timeout(150)
