@@ -1,0 +1,28 @@
+{
+  "checks": [
+    "desktop: exact reported page responds successfully",
+    "desktop: fixed 0.1.4 asset loads from normal URL",
+    "desktop: reported related-product title is actual Brizy content",
+    "desktop: related card converts 60 inches to 152.4 cm",
+    "desktop: previous two-dimension/seats fix still works",
+    "desktop: link targets remain unchanged",
+    "desktop: related and main titles restore original inches exactly",
+    "desktop: repeated toggles introduce no drift",
+    "desktop: remembered metric mode converts both titles after reload",
+    "phone: exact reported page responds successfully",
+    "phone: fixed 0.1.4 asset loads from normal URL",
+    "phone: reported related-product title is actual Brizy content",
+    "phone: related card converts 60 inches to 152.4 cm",
+    "phone: previous two-dimension/seats fix still works",
+    "phone: link targets remain unchanged",
+    "phone: related and main titles restore original inches exactly",
+    "phone: repeated toggles introduce no drift",
+    "phone: remembered metric mode converts both titles after reload",
+    "phone: page has no horizontal overflow",
+    "no frontend JavaScript exceptions"
+  ],
+  "count": 20,
+  "errors": [],
+  "source": "Round 60\u2033 Dia",
+  "converted": "Round 152.4 cm Dia"
+}

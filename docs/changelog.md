@@ -1,0 +1,35 @@
+# Changelog
+
+## 0.1.4 — 2026-10-15
+
+- Recognize Dia/Dia./Diam/Diam. diameter abbreviations after inch symbols, including the related-product title `Round 60″ Dia`.
+- Preserve spelling, punctuation, links and stored titles while converting only the measurement; case-insensitive suffix matching retains whole-word boundaries.
+- Added related-card/dynamic-card restoration tests and checks excluding unrelated words such as diagram/dialogue. The parenthetical-dimension fix remains covered. No settings or database changes.
+
+## 0.1.3 — 2026-10-15
+
+- Fixed inch-symbol measurements before parenthesized or bracketed annotations, including `Rectangle 30″ x 72″ (seats 6)`; both dimensions now convert while the seating count stays unchanged.
+- Kept ambiguous bare-English `in`, quoted prose, feet compounds and area/volume notation protected.
+- Added exact-title, punctuation/quote-variant, dynamic option-value and reversible DOM regression tests. No settings, product content or database schema changes.
+
+## 0.1.2 — 2026-10-08
+
+- Added separate inch/centimetre button text fields with original wording as defaults.
+- Applied custom labels to every frontend control, shortcode, dynamic fallback and live preview, including accessible names.
+- Added plain-text sanitization, empty-label fallback, Unicode-safe 60-character bounds, and responsive wrapping.
+- Extended the existing settings option with label_in/label_cm; no authored content or product data migration.
+
+## 0.1.1 — 2026-10-06
+
+- Added native WordPress color pickers for background and text, keeping strict six-digit hex validation.
+- Replaced static buttons with a live scoped preview that reuses the real frontend button CSS.
+- Preview reflects radius, edge offset, corner, placement toggles, units, and rounding without saving or touching browser preference.
+- Added responsive settings layout, invalid-color help, admin-only asset gates and preview tests. Existing option schema/settings are unchanged.
+
+## 0.1.0 — 2026-10-06
+
+- Initial display-only inch-to-centimeter toggle with exact original restoration.
+- Independent floating, header-menu, and footer placements plus shortcode.
+- Rounding, initial units, visitor preference, custom selectors and scoped appearance settings.
+- Dynamic text/quote-label handling while preserving form values.
+- Automated PHP and browser-DOM tests, staging verification, and installable package.

@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "desktop: reported product page responds 200",
+    "desktop: plain page URL loads cache-busted fixed asset",
+    "desktop: original reported title visible",
+    "desktop: every authored title converts both 30 and 72, retaining seats 6",
+    "desktop: no partially converted title remains",
+    "desktop: original text restored verbatim",
+    "desktop: repeated toggles do not introduce rounding drift",
+    "desktop: remembered metric mode converts both dimensions on reload",
+    "phone: reported product page responds 200",
+    "phone: plain page URL loads cache-busted fixed asset",
+    "phone: original reported title visible",
+    "phone: every authored title converts both 30 and 72, retaining seats 6",
+    "phone: no partially converted title remains",
+    "phone: original text restored verbatim",
+    "phone: repeated toggles do not introduce rounding drift",
+    "phone: no horizontal page overflow",
+    "phone: remembered metric mode converts both dimensions on reload",
+    "no frontend JavaScript exceptions"
+  ],
+  "count": 18,
+  "errors": [],
+  "source": "Rectangle 30\u2033 x 72\u2033 (seats 6)",
+  "metric": "Rectangle 76.2 cm x 182.9 cm (seats 6)"
+}

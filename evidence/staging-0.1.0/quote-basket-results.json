@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "metric quote selection successfully adds original 30-h key and quantity 2 to browser basket",
+    "switching back to inches leaves saved browser quote basket byte-identical",
+    "existing quote header count still updates normally"
+  ],
+  "count": 3,
+  "scope": "Browser-local basket only; no customer request or email submitted"
+}
